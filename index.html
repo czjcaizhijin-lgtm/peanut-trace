@@ -1158,7 +1158,7 @@
       <div class="shell">
         <div class="achievement-header">
           <div class="achievement-header-text">
-            <div class="section-kicker">产业成果</div>
+            <div class="section-kicker"></div>
             <h2 class="section-title">成果展示</h2>
             <p>科研协同、示范基地与阶段性成果材料。</p>
           </div>
@@ -1174,7 +1174,6 @@
               <div class="achievement-card">
                 <div class="achievement-image-frame"><img src="achievement-fund.png" alt="彩票公益金资助与特色农产品产业研究院相关挂牌材料"></div>
                 <div class="achievement-caption">
-                  <small>成果 01</small>
                   <h3>产业研究平台与公益资金支持</h3>
                   <p>展示彩票公益金资助信息及相关产业研究平台建设基础。</p>
                   <div class="achievement-view-tip">点击图片可放大查看</div>
@@ -1185,7 +1184,6 @@
               <div class="achievement-card">
                 <div class="achievement-image-frame"><img src="achievement-station.jpg" alt="江苏省科技小院挂牌"></div>
                 <div class="achievement-caption">
-                  <small>成果 02</small>
                   <h3>江苏省科技小院建设</h3>
                   <p>体现科研院所协同、农机与农业科技支撑的平台基础。</p>
                   <div class="achievement-view-tip">点击图片可放大查看</div>
@@ -1196,7 +1194,6 @@
               <div class="achievement-card">
                 <div class="achievement-image-frame"><img src="achievement-base.jpg" alt="花生科技示范展示基地"></div>
                 <div class="achievement-caption">
-                  <small>成果 03</small>
                   <h3>花生科技示范展示基地</h3>
                   <p>开展花生品种、栽培技术与机械化作业等示范展示。</p>
                   <div class="achievement-view-tip">点击图片可放大查看</div>
@@ -1207,7 +1204,6 @@
               <div class="achievement-card">
                 <div class="achievement-image-frame"><img src="achievement-results.png" alt="产业研究院共建协议相关指标年度完成情况材料"></div>
                 <div class="achievement-caption">
-                  <small>成果 04</small>
                   <h3>产业研究院阶段性合作成果</h3>
                   <p>记录合作项目、科技服务、示范推广等阶段性完成情况。</p>
                   <div class="achievement-view-tip">点击图片可放大查看</div>
@@ -1348,7 +1344,7 @@
       box.innerHTML=currentJourney.map((item,i)=>{
         const source=item.image_url||placeholder(item);
         const fallback=placeholder(item);
-        const state=item.image_url?'点击查看现场图片':'该环节暂未上传现场图片';
+        const state=item.image_url?'该环节暂未上传现场图片';
         return `
           <article class="panel journey-accordion-item" data-index="${i}">
             <button type="button" class="journey-accordion-trigger" data-index="${i}" aria-expanded="false">
