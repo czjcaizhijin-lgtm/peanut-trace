@@ -605,8 +605,8 @@
           <h1>让一粒好花生，<br>有数据证明。</h1>
           <p class="hero-subtitle">从产地、机械作业到干燥加工，再到第三方检测，把原本看不见的品质过程，变成消费者看得懂、查得到、验得了的数字档案。</p>
           <div class="hero-meta">
-            <span class="pill good">已完成第三方检测</span>
-            <span class="pill" id="heroOriginPill">江苏如皋 · 江安镇</span>
+            <span class="pill good" id="inspectionStatusPill">检测信息读取中</span>
+            <span class="pill" id="heroOriginPill">未录入</span>
             <span class="pill">生产加工全程留痕</span>
           </div>
         </div>
@@ -622,8 +622,8 @@
             <div class="seal"><div><strong>可信</strong>品质档案</div></div>
             <div class="side-number">
               <small>当前批次</small>
-              <strong id="batchNo">2026-001</strong>
-              <div class="side-origin" id="sideOrigin">江苏如皋 · 江安镇</div>
+              <strong id="batchNo">未录入</strong>
+              <div class="side-origin" id="sideOrigin">未录入</div>
             </div>
           </div>
         </aside>
@@ -640,9 +640,9 @@
           <div class="section-note">真正的溯源不是把信息“写进页面”，而是让生产数据在设备运行时自然产生，再由检测结果进行终端验证。</div>
         </div>
         <div class="trust-grid">
-          <article class="trust-card"><div class="trust-index">第一层</div><h3>产地可溯</h3><p>关联江苏如皋江安镇特色花生产业基地、品种与生产批次信息。</p></article>
-          <article class="trust-card"><div class="trust-index">第二层</div><h3>过程可查</h3><p>关键设备运行、干燥、储藏和加工参数进入批次数字质量档案。</p></article>
-          <article class="trust-card"><div class="trust-index">第三层</div><h3>检测可验</h3><p>第三方检验结果与加工批次关联，形成“过程可控 + 结果可验”的双重证据。</p></article>
+          <article class="trust-card"><h3>产地可溯</h3><p>关联江苏如皋江安镇特色花生产业基地、品种与生产批次信息。</p></article>
+          <article class="trust-card"><h3>过程可查</h3><p>关键设备运行、干燥、储藏和加工参数进入批次数字质量档案。</p></article>
+          <article class="trust-card"><h3>检测可验</h3><p>第三方检验结果与加工批次关联，形成“过程可控 + 结果可验”的双重证据。</p></article>
         </div>
       </div>
     </section>
@@ -801,10 +801,10 @@
         <div class="record-panel">
           <div class="record-titlebar"><strong>本批次加工记录</strong><span>数据状态：已归档</span></div>
           <div class="process-table">
-            <div class="process-cell"><small>加工方式</small><strong>热泵干燥</strong><em>低温干燥工艺</em></div>
-            <div class="process-cell"><small>干燥温度</small><strong>42.0 ℃</strong><em>关键过程参数</em></div>
-            <div class="process-cell"><small>仓储相对湿度</small><strong>56%</strong><em>储藏环境记录</em></div>
-            <div class="process-cell"><small>单批处理能力</small><strong>5 吨/批次</strong><em>现有设备能力</em></div>
+            <div class="process-cell"><small>加工方式</small><strong>未录入</strong></div>
+            <div class="process-cell"><small>干燥温度</small><strong>未录入</strong></div>
+            <div class="process-cell"><small>仓储相对湿度</small><strong>未录入</strong></div>
+            <div class="process-cell"><small>单批处理能力</small><strong>未录入</strong></div>
           </div>
           <div class="record-footnote"><strong>数据来源：</strong>加工设备、可编程控制器及温湿度传感终端形成过程记录，并与当前批次关联。</div>
         </div>
@@ -815,7 +815,7 @@
       <div class="shell">
         <div class="section-head">
           <div><div class="section-kicker">质量检测</div><h2 class="section-title">第三方检测结果</h2></div>
-          <div class="section-note">检验报告编号：<strong><span class="report-no">QZSW202602521</span></strong>。下列结果摘自已提供的检验检测报告第2页，完整结论以报告原件为准。</div>
+          <div class="section-note">检验报告编号：<strong><span class="report-no">未录入</span></strong>。下列结果摘自已提供的检验检测报告第2页，完整结论以报告原件为准。</div>
         </div>
         <div class="inspection-record">
           <div>
@@ -909,12 +909,38 @@
       ["06","packaging","包装建档","形成“一批一码、一批一档”的数字品质身份证。"]
     ];
     let currentJourney=[];
+    let currentBatchDisplayCode="未录入";
     const esc=s=>String(s??"").replace(/[&<>\"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'\"':"&quot;","'":"&#39;"}[m]));
-    const placeholder=item=>`data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900"><rect width="1200" height="900" fill="#f6f0e4"/><rect x="58" y="58" width="1084" height="784" rx="36" fill="#fffdf8" stroke="#d9c99f"/><text x="110" y="210" font-family="Microsoft YaHei,Arial" font-size="34" fill="#a98949">批次产业照片</text><text x="110" y="360" font-family="Microsoft YaHei,Arial" font-size="82" font-weight="700" fill="#173a2b">${esc(item.title)}</text><text x="110" y="445" font-family="Microsoft YaHei,Arial" font-size="30" fill="#617067">当前批次：${esc(displayBatchCode(requestedBatch))}</text><text x="110" y="620" font-family="Microsoft YaHei,Arial" font-size="28" fill="#173a2b">该环节图片尚未上传</text><text x="110" y="675" font-family="Microsoft YaHei,Arial" font-size="23" fill="#777f79">发布后消费者端刷新即可同步显示。</text></svg>`)}`;
+    const placeholder=item=>`data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900"><rect width="1200" height="900" fill="#f6f0e4"/><rect x="58" y="58" width="1084" height="784" rx="36" fill="#fffdf8" stroke="#d9c99f"/><text x="110" y="210" font-family="Microsoft YaHei,Arial" font-size="34" fill="#a98949">批次产业照片</text><text x="110" y="360" font-family="Microsoft YaHei,Arial" font-size="82" font-weight="700" fill="#173a2b">${esc(item.title)}</text><text x="110" y="445" font-family="Microsoft YaHei,Arial" font-size="30" fill="#617067">当前批次：${esc(currentBatchDisplayCode)}</text><text x="110" y="620" font-family="Microsoft YaHei,Arial" font-size="28" fill="#173a2b">该环节图片尚未上传</text><text x="110" y="675" font-family="Microsoft YaHei,Arial" font-size="23" fill="#777f79">发布后消费者端刷新即可同步显示。</text></svg>`)}`;
+    function formatBatchDate(value){
+      if(!value) return '未录入';
+      const s=String(value);
+      const m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      return m?`${m[1]}年${m[2]}月${m[3]}日`:s;
+    }
+
+    function batchValue(value){
+      if(value===null || value===undefined || String(value).trim()==='') return '未录入';
+      return String(value);
+    }
+
     function renderIdentity(b){
-      const items=[['产品名称',b?.product_name||'如皋小花生 · 精品批次'],['产地',b?.origin||'江苏如皋 · 江安镇'],['品种',b?.variety||'细荚花生'],['采收日期',b?.harvest_date||'待完善'],['加工日期',b?.process_date||'待完善'],['包装规格',b?.package_spec||'200 g / 袋']];
-      const box=document.getElementById('identityGrid'); box.innerHTML='';
-      items.forEach(([k,v])=>{const d=document.createElement('div');d.className='kv';d.innerHTML=`<small>${esc(k)}</small><strong>${esc(v)}</strong>`;box.appendChild(d)});
+      const items=[
+        ['产品名称',batchValue(b?.product_name)],
+        ['产地',batchValue(b?.origin)],
+        ['品种',batchValue(b?.variety)],
+        ['采收日期',formatBatchDate(b?.harvest_date)],
+        ['加工日期',formatBatchDate(b?.process_date)],
+        ['包装规格',batchValue(b?.package_spec)]
+      ];
+      const box=document.getElementById('identityGrid');
+      box.innerHTML='';
+      items.forEach(([k,v])=>{
+        const d=document.createElement('div');
+        d.className='kv';
+        d.innerHTML=`<small>${esc(k)}</small><strong>${esc(v)}</strong>`;
+        box.appendChild(d);
+      });
     }
     let openJourneyIndex = null;
 
@@ -971,7 +997,7 @@
                 <img data-src="${esc(source)}" data-fallback="${esc(fallback)}" alt="本批次${esc(item.title)}现场图片">
               </div>
               <div class="journey-accordion-meta">
-                <strong>批次：${esc(displayBatchCode(requestedBatch))}</strong>
+                <strong>批次：${esc(currentBatchDisplayCode)}</strong>
                 <span>${state}</span>
               </div>
             </div>
@@ -1078,37 +1104,64 @@
 
     function renderProcessData(batch){
       const cells=document.querySelectorAll('#telemetry .process-cell strong');
-      if(cells.length>=4){
-        if(batch?.drying_method) cells[0].textContent=batch.drying_method;
-        if(batch?.drying_temperature!==null && batch?.drying_temperature!==undefined && batch?.drying_temperature!=='') cells[1].textContent=`${batch.drying_temperature} ℃`;
-        if(batch?.storage_humidity!==null && batch?.storage_humidity!==undefined && batch?.storage_humidity!=='') cells[2].textContent=`${batch.storage_humidity}%`;
-        if(batch?.batch_capacity) cells[3].textContent=batch.batch_capacity;
-      }
+      if(cells.length<4) return;
+      cells[0].textContent=batchValue(batch?.drying_method);
+      cells[1].textContent=(batch?.drying_temperature!==null && batch?.drying_temperature!==undefined && String(batch.drying_temperature).trim()!=='')
+        ? `${batch.drying_temperature} ℃` : '未录入';
+      cells[2].textContent=(batch?.storage_humidity!==null && batch?.storage_humidity!==undefined && String(batch.storage_humidity).trim()!=='')
+        ? `${batch.storage_humidity}%` : '未录入';
+      cells[3].textContent=batchValue(batch?.batch_capacity);
     }
 
     function renderInspectionSummary(batch){
-      if(batch?.inspection_summary){
-        const box=document.querySelector('.inspection-summary-box');
-        if(box) box.innerHTML=`<strong>检测摘要：</strong>${esc(batch.inspection_summary)}`;
-      }
+      const box=document.querySelector('.inspection-summary-box');
+      if(!box) return;
+      box.innerHTML=`<strong>检测摘要：</strong>${esc(batchValue(batch?.inspection_summary))}`;
     }
     async function load(){
-      document.getElementById('batchNo').textContent=displayBatchCode(requestedBatch);
       let batch=null, steps=null;
       const rb=await db.from('batches').select('*').eq('batch_code',requestedBatch).eq('published',true).maybeSingle();
-      if(!rb.error&&rb.data){batch=rb.data; const rs=await db.from('trace_steps').select('*').eq('batch_id',batch.id).order('sort_order'); if(!rs.error) steps=rs.data;}
-      renderIdentity(batch);
-      const shownBatch = displayBatchCode(batch?.batch_code || requestedBatch);
-      document.getElementById('batchNo').textContent = shownBatch;
-      if(batch?.origin){
-        const originPill=document.getElementById('heroOriginPill');
-        const sideOrigin=document.getElementById('sideOrigin');
-        if(originPill) originPill.textContent=batch.origin;
-        if(sideOrigin) sideOrigin.textContent=batch.origin;
+
+      if(!rb.error && rb.data){
+        batch=rb.data;
+        const rs=await db.from('trace_steps').select('*').eq('batch_id',batch.id).order('sort_order');
+        if(!rs.error) steps=rs.data;
       }
-      currentJourney=(steps&&steps.length?steps.map((s,i)=>({step:String(s.sort_order||i+1).padStart(2,'0'),title:s.step_title,desc:s.description||'',image_url:s.image_url||null})):fallbackJourney.map(x=>({step:x[0],title:x[2],desc:x[3],image_url:null})));
+
+      currentBatchDisplayCode=batch?.batch_code ? batch.batch_code : '未录入';
+
+      document.getElementById('batchNo').textContent=currentBatchDisplayCode;
+      document.getElementById('heroOriginPill').textContent=batchValue(batch?.origin);
+      document.getElementById('sideOrigin').textContent=batchValue(batch?.origin);
+
+      const reportNo=batchValue(batch?.inspection_no);
+      document.querySelectorAll('.report-no').forEach(e=>e.textContent=reportNo);
+
+      const statusPill=document.getElementById('inspectionStatusPill');
+      if(statusPill){
+        statusPill.textContent=(batch?.inspection_no || batch?.inspection_report_url)
+          ? '第三方检测已归档'
+          : '检测信息未录入';
+      }
+
+      renderIdentity(batch);
+
+      currentJourney=(steps&&steps.length
+        ? steps.map((s,i)=>({
+            step:String(s.sort_order||i+1).padStart(2,'0'),
+            title:s.step_title,
+            desc:s.description||'',
+            image_url:s.image_url||null
+          }))
+        : fallbackJourney.map(x=>({
+            step:x[0],
+            title:x[2],
+            desc:x[3],
+            image_url:null
+          }))
+      );
+
       renderJourney();
-      if(batch?.inspection_no){document.querySelectorAll('.report-no').forEach(e=>e.textContent=batch.inspection_no)}
       renderReport(batch);
       renderProcessData(batch);
       renderInspectionSummary(batch);
