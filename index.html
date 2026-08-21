@@ -395,7 +395,7 @@
     .plain-report-actions .btn { border-radius:8px; padding:8px 12px; font-size:13px; }
 
     #telemetry .section-kicker, #inspection .section-kicker, #journey .section-kicker, #research .section-kicker, #story .section-kicker { letter-spacing:.06em; text-transform:none; }
-    #telemetry .section-head, #inspection .section-head { align-items:end; }
+    #telemetry .section-head, #inspection .section-head { align-items:flex-start; text-align:left; }
 
     @media (max-width: 900px) {
       .process-table { grid-template-columns:repeat(2,minmax(0,1fr)); }
@@ -487,6 +487,59 @@
       .hero-side-body { padding: 20px 22px 22px; }
       .hero-side-body .seal { width: 88px; height: 88px; }
       .hero-side-photo-caption strong { font-size: 18px; }
+    }
+
+  
+    .pdf-report-card {
+      min-height: 250px;
+      padding: 34px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: #f6f2e8;
+      color: var(--green-950);
+    }
+    .pdf-report-mark {
+      width: 66px;
+      height: 78px;
+      border: 2px solid var(--green-800);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 16px;
+      margin-bottom: 15px;
+      background: #fffdf8;
+      position: relative;
+    }
+    .pdf-report-mark::after {
+      content: "";
+      position: absolute;
+      right: -2px;
+      top: -2px;
+      width: 18px;
+      height: 18px;
+      background: #f6f2e8;
+      border-left: 2px solid var(--green-800);
+      border-bottom: 2px solid var(--green-800);
+    }
+    .pdf-report-card strong { font-size: 17px; }
+    .pdf-report-card span { margin-top: 8px; color: var(--muted); font-size: 13px; line-height: 1.7; }
+
+  
+    @media (max-width: 820px) {
+      #telemetry .section-head,
+      #inspection .section-head {
+        align-items: flex-start !important;
+        text-align: left !important;
+      }
+      #telemetry .section-head > div,
+      #inspection .section-head > div {
+        width: 100%;
+        text-align: left !important;
+      }
     }
 
   </style>
@@ -591,10 +644,22 @@
         .journey-file-hint code { color: var(--green-800); background: #f2efe7; border-radius: 6px; padding: 2px 5px; }
         @media (max-width: 820px) {
           .journey-gallery-grid { grid-template-columns: 1fr; }
-          .journey-tabs { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 10px; scrollbar-width: none; }
-          .journey-tabs::-webkit-scrollbar { display: none; }
+          .journey-tabs {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0,1fr));
+            gap: 8px;
+            padding: 4px 2px 10px;
+          }
           .journey-tabs::before { display: none; }
-          .journey-tab { flex: 0 0 185px; padding: 13px 14px; border: 1px solid var(--line); background: rgba(255,253,248,.75); }
+          .journey-tab {
+            width: 100%;
+            min-width: 0;
+            padding: 13px 14px;
+            border: 1px solid var(--line);
+            background: rgba(255,253,248,.75);
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+          }
           .journey-tab + .journey-tab { margin-top: 0; }
           .journey-tab::before { display: none; }
           .journey-tab:hover { transform: none; }
@@ -602,6 +667,7 @@
           .journey-viewer { min-height: 0; }
         }
         @media (max-width: 520px) {
+          .journey-tabs { grid-template-columns: 1fr; }
           .journey-viewer-head { padding: 18px 18px 13px; }
           .journey-viewer-head h3 { font-size: 21px; }
           .journey-viewer-badge { display: none; }
@@ -757,21 +823,70 @@
       const box=document.getElementById('identityGrid'); box.innerHTML='';
       items.forEach(([k,v])=>{const d=document.createElement('div');d.className='kv';d.innerHTML=`<small>${esc(k)}</small><strong>${esc(v)}</strong>`;box.appendChild(d)});
     }
+    let activeJourneyIndex = 0;
     function setJourney(i){
       const item=currentJourney[i];
+      if(!item) return;
+      activeJourneyIndex=i;
       document.querySelectorAll('.journey-tab').forEach((e,j)=>e.classList.toggle('active',j===i));
       document.getElementById('journeyViewerStep').textContent=`环节 ${item.step}`;
       document.getElementById('journeyViewerTitle').textContent=item.title;
       document.getElementById('journeyViewerDesc').textContent=item.desc;
       document.getElementById('journeyViewerBatch').textContent=displayBatchCode(requestedBatch);
-      const img=document.getElementById('journeyViewerImage'); img.src=item.image_url||placeholder(item);
-      document.getElementById('journeyImageState').textContent=item.image_url?'后台已发布':'暂无该环节图片';
-      document.getElementById('journeyFileHint').textContent=item.image_url?'该图片由管理后台上传并发布。':'该环节图片尚未上传。';
+
+      const img=document.getElementById('journeyViewerImage');
+      const state=document.getElementById('journeyImageState');
+      const hint=document.getElementById('journeyFileHint');
+
+      if(!item.image_url){
+        img.style.opacity='1';
+        img.src=placeholder(item);
+        state.textContent='暂无该环节图片';
+        hint.textContent='该环节图片尚未上传。';
+        return;
+      }
+
+      state.textContent='图片加载中';
+      hint.textContent='正在读取当前环节现场图片。';
+      img.style.opacity='.35';
+
+      const loader=new Image();
+      loader.onload=()=>{
+        if(activeJourneyIndex!==i) return;
+        img.src=item.image_url;
+        img.alt=`本批次${item.title}现场图片`;
+        img.style.opacity='1';
+        state.textContent='图片已归档';
+        hint.textContent='该图片已与当前批次关联。';
+      };
+      loader.onerror=()=>{
+        if(activeJourneyIndex!==i) return;
+        img.src=placeholder(item);
+        img.style.opacity='1';
+        state.textContent='图片加载失败';
+        hint.textContent='网络暂未加载该图片，可稍后重试。';
+      };
+      loader.src=item.image_url;
     }
+
     function renderJourney(){
-      const box=document.getElementById('journeyList'); box.innerHTML='';
-      currentJourney.forEach((item,i)=>{const b=document.createElement('button');b.type='button';b.className='journey-tab'+(i===0?' active':'');b.innerHTML=`<time>环节 ${item.step}</time><strong>${esc(item.title)}</strong><span>${esc(item.desc)}</span>`;b.addEventListener('click',()=>setJourney(i));box.appendChild(b)}); setJourney(0);
+      const box=document.getElementById('journeyList');
+      box.innerHTML=currentJourney.map((item,i)=>`
+        <button type="button" class="journey-tab${i===0?' active':''}" data-index="${i}">
+          <time>环节 ${item.step}</time>
+          <strong>${esc(item.title)}</strong>
+          <span>${esc(item.desc)}</span>
+        </button>`).join('');
+      setJourney(0);
     }
+
+    const journeyList=document.getElementById('journeyList');
+    journeyList.addEventListener('click',event=>{
+      const button=event.target.closest('.journey-tab');
+      if(!button || !journeyList.contains(button)) return;
+      const index=Number(button.dataset.index);
+      if(Number.isInteger(index)) setJourney(index);
+    });
 
     function renderReport(batch){
       const box=document.getElementById('reportPreview');
@@ -787,9 +902,14 @@
       }
       btn.href=url;
       btn.style.display='inline-block';
-      const lower=url.toLowerCase();
-      if(lower.includes('.pdf')){
-        box.innerHTML=`<iframe src="${esc(url)}" title="检验报告预览" style="width:100%;height:390px;border:0;background:white"></iframe>`;
+      const lower=(batch?.inspection_report_name||url).toLowerCase();
+      if(lower.endsWith('.pdf') || lower.includes('.pdf')){
+        box.innerHTML=`
+          <div class="pdf-report-card">
+            <div class="pdf-report-mark">报告</div>
+            <strong>第三方检验报告已上传</strong>
+            <span>${esc(batch?.inspection_report_name||'检验报告原件')}<br>手机端请点击下方按钮查看完整报告。</span>
+          </div>`;
       }else{
         box.innerHTML=`<img src="${esc(url)}" alt="本批次检验报告预览" style="width:100%;height:auto">`;
       }
