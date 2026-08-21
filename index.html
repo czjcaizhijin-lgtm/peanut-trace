@@ -746,7 +746,7 @@
               <div class="notice">正在读取检验报告</div>
             </div>
             <div class="plain-report-actions">
-              <small id="reportFileName">检验报告原件</small>
+              <small id="reportFileName">检验报告原件（手机端优先显示第一页预览图）</small>
               <a class="btn" id="reportOpenBtn" href="#" target="_blank" rel="noopener" style="display:none">查看报告原件</a>
             </div>
           </article>
@@ -906,8 +906,19 @@
       btn.href=url;
       btn.style.display='inline-block';
       const lower=(reportName||url).toLowerCase();
-      if(lower.endsWith('.pdf') || lower.includes('.pdf')){
-        renderPdfPreview(url, box, reportName);
+      const isPdf=lower.endsWith('.pdf') || lower.includes('.pdf');
+      if(isPdf){
+        const previewUrl=`${url}.preview.jpg`;
+        box.innerHTML=`<img id="reportPreviewImage" src="${esc(previewUrl)}" alt="本批次检验报告第一页预览" style="width:100%;height:auto;display:block">`;
+        const img=box.querySelector('#reportPreviewImage');
+        img.addEventListener('error',()=>{
+          box.innerHTML=`
+            <div class="pdf-report-card">
+              <div class="pdf-report-mark">报告</div>
+              <strong>第三方检验报告已上传</strong>
+              <span>${esc(reportName)}<br>当前未生成图片预览，请点击下方按钮查看完整报告。</span>
+            </div>`;
+        }, {once:true});
       }else{
         box.innerHTML=`<img src="${esc(url)}" alt="本批次检验报告预览" style="width:100%;height:auto;display:block">`;
       }
