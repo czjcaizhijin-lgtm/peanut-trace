@@ -1158,7 +1158,7 @@
       <div class="shell">
         <div class="achievement-header">
           <div class="achievement-header-text">
-            <div class="section-kicker"></div>
+            
             <h2 class="section-title">成果展示</h2>
             <p>科研协同、示范基地与阶段性成果材料。</p>
           </div>
@@ -1174,6 +1174,7 @@
               <div class="achievement-card">
                 <div class="achievement-image-frame"><img src="achievement-fund.png" alt="彩票公益金资助与特色农产品产业研究院相关挂牌材料"></div>
                 <div class="achievement-caption">
+                  
                   <h3>产业研究平台与公益资金支持</h3>
                   <p>展示彩票公益金资助信息及相关产业研究平台建设基础。</p>
                   <div class="achievement-view-tip">点击图片可放大查看</div>
@@ -1184,6 +1185,7 @@
               <div class="achievement-card">
                 <div class="achievement-image-frame"><img src="achievement-station.jpg" alt="江苏省科技小院挂牌"></div>
                 <div class="achievement-caption">
+                  
                   <h3>江苏省科技小院建设</h3>
                   <p>体现科研院所协同、农机与农业科技支撑的平台基础。</p>
                   <div class="achievement-view-tip">点击图片可放大查看</div>
@@ -1194,6 +1196,7 @@
               <div class="achievement-card">
                 <div class="achievement-image-frame"><img src="achievement-base.jpg" alt="花生科技示范展示基地"></div>
                 <div class="achievement-caption">
+                  
                   <h3>花生科技示范展示基地</h3>
                   <p>开展花生品种、栽培技术与机械化作业等示范展示。</p>
                   <div class="achievement-view-tip">点击图片可放大查看</div>
@@ -1204,6 +1207,7 @@
               <div class="achievement-card">
                 <div class="achievement-image-frame"><img src="achievement-results.png" alt="产业研究院共建协议相关指标年度完成情况材料"></div>
                 <div class="achievement-caption">
+                  
                   <h3>产业研究院阶段性合作成果</h3>
                   <p>记录合作项目、科技服务、示范推广等阶段性完成情况。</p>
                   <div class="achievement-view-tip">点击图片可放大查看</div>
@@ -1257,7 +1261,7 @@
     const SUPABASE_URL = "https://jgoluzlxhzikrkxammje.supabase.co";
     const SUPABASE_KEY = "sb_publishable_F8SQl1U_G-jdDDW6mAw27w_rTxYlDK4";
     const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    const requestedBatch = new URLSearchParams(location.search).get("batch") || "JA-2026-001";
+    const requestedBatch = (new URLSearchParams(location.search).get("batch") || "").trim();
     const displayBatchCode = code => {
       const parts = String(code || "").split("-").filter(Boolean);
       const cleaned = parts.filter(p => !["JA","DEMO"].includes(p.toUpperCase()));
@@ -1344,7 +1348,7 @@
       box.innerHTML=currentJourney.map((item,i)=>{
         const source=item.image_url||placeholder(item);
         const fallback=placeholder(item);
-        const state=item.image_url?:'该环节暂未上传现场图片';
+        const state=item.image_url?'':'该环节暂未上传现场图片';
         return `
           <article class="panel journey-accordion-item" data-index="${i}">
             <button type="button" class="journey-accordion-trigger" data-index="${i}" aria-expanded="false">
@@ -1361,7 +1365,7 @@
               </div>
               <div class="journey-accordion-meta">
                 <strong>批次：${esc(currentBatchDisplayCode)}</strong>
-                <span>${state}</span>
+                ${state?`<span>${state}</span>`:""}
               </div>
             </div>
           </article>`;
@@ -1481,53 +1485,121 @@
       if(!box) return;
       box.innerHTML=`<strong>检测摘要：</strong>${esc(batchValue(batch?.inspection_summary))}`;
     }
-    async function load(){
-      let batch=null, steps=null;
-      const rb=await db.from('batches').select('*').eq('batch_code',requestedBatch).eq('published',true).maybeSingle();
-
-      if(!rb.error && rb.data){
-        batch=rb.data;
-        const rs=await db.from('trace_steps').select('*').eq('batch_id',batch.id).order('sort_order');
-        if(!rs.error) steps=rs.data;
-      }
-
-      currentBatchDisplayCode=batch?.batch_code ? batch.batch_code : '未录入';
-
-      document.getElementById('batchNo').textContent=currentBatchDisplayCode;
-      document.getElementById('heroOriginPill').textContent=batchValue(batch?.origin);
-      document.getElementById('sideOrigin').textContent=batchValue(batch?.origin);
-
-      const reportNo=batchValue(batch?.inspection_no);
-      document.querySelectorAll('.report-no').forEach(e=>e.textContent=reportNo);
+    function showBatchLoadMessage(message){
+      currentBatchDisplayCode='未录入';
+      document.getElementById('batchNo').textContent='未录入';
+      document.getElementById('heroOriginPill').textContent='未录入';
+      document.getElementById('sideOrigin').textContent='未录入';
 
       const statusPill=document.getElementById('inspectionStatusPill');
-      if(statusPill){
-        statusPill.textContent=(batch?.inspection_no || batch?.inspection_report_url)
-          ? '第三方检测已归档'
-          : '检测信息未录入';
+      if(statusPill) statusPill.textContent=message;
+
+      const identity=document.getElementById('identityGrid');
+      if(identity){
+        identity.innerHTML=`<div class="notice" style="grid-column:1/-1;padding:18px 4px">${esc(message)}</div>`;
       }
 
-      renderIdentity(batch);
+      const journey=document.getElementById('journeyList');
+      if(journey){
+        journey.innerHTML=`<div class="panel journey-empty">${esc(message)}</div>`;
+      }
 
-      currentJourney=(steps&&steps.length
-        ? steps.map((s,i)=>({
-            step:String(s.sort_order||i+1).padStart(2,'0'),
-            title:s.step_title,
-            desc:s.description||'',
-            image_url:s.image_url||null
-          }))
-        : fallbackJourney.map(x=>({
-            step:x[0],
-            title:x[2],
-            desc:x[3],
-            image_url:null
-          }))
-      );
+      const cells=document.querySelectorAll('#telemetry .process-cell strong');
+      cells.forEach(cell=>cell.textContent='未录入');
 
-      renderJourney();
-      renderReport(batch);
-      renderProcessData(batch);
-      renderInspectionSummary(batch);
+      document.querySelectorAll('.report-no').forEach(e=>e.textContent='未录入');
+      const summary=document.querySelector('.inspection-summary-box');
+      if(summary) summary.innerHTML=`<strong>检测摘要：</strong>${esc(message)}`;
+
+      const reportBox=document.getElementById('reportPreview');
+      const reportBtn=document.getElementById('reportOpenBtn');
+      if(reportBox) reportBox.innerHTML=`<div class="notice">${esc(message)}</div>`;
+      if(reportBtn) reportBtn.style.display='none';
+    }
+
+    async function fetchPublishedBatch(){
+      if(requestedBatch){
+        return await db.from('batches')
+          .select('*')
+          .eq('batch_code',requestedBatch)
+          .eq('published',true)
+          .maybeSingle();
+      }
+
+      return await db.from('batches')
+        .select('*')
+        .eq('published',true)
+        .order('updated_at',{ascending:false})
+        .limit(1)
+        .maybeSingle();
+    }
+
+    async function load(){
+      try{
+        let batch=null, steps=null;
+        const rb=await fetchPublishedBatch();
+
+        if(rb.error) throw rb.error;
+
+        if(!rb.data){
+          const message=requestedBatch
+            ? `批次 ${requestedBatch} 不存在或尚未发布`
+            : '当前暂无已发布批次';
+          showBatchLoadMessage(message);
+          return;
+        }
+
+        batch=rb.data;
+
+        const rs=await db.from('trace_steps')
+          .select('*')
+          .eq('batch_id',batch.id)
+          .order('sort_order');
+
+        if(rs.error) throw rs.error;
+        steps=rs.data||[];
+
+        currentBatchDisplayCode=batch.batch_code||'未录入';
+
+        document.getElementById('batchNo').textContent=currentBatchDisplayCode;
+        document.getElementById('heroOriginPill').textContent=batchValue(batch.origin);
+        document.getElementById('sideOrigin').textContent=batchValue(batch.origin);
+
+        const reportNo=batchValue(batch.inspection_no);
+        document.querySelectorAll('.report-no').forEach(e=>e.textContent=reportNo);
+
+        const statusPill=document.getElementById('inspectionStatusPill');
+        if(statusPill){
+          statusPill.textContent=(batch.inspection_no || batch.inspection_report_url)
+            ? '第三方检测已归档'
+            : '检测信息未录入';
+        }
+
+        renderIdentity(batch);
+
+        currentJourney=(steps.length
+          ? steps.map((s,i)=>({
+              step:String(s.sort_order||i+1).padStart(2,'0'),
+              title:s.step_title,
+              desc:s.description||'',
+              image_url:s.image_url||null
+            }))
+          : fallbackJourney.map(x=>({
+              step:x[0],
+              title:x[2],
+              desc:x[3],
+              image_url:null
+            }))
+        );
+
+        renderJourney();
+        renderReport(batch);
+        renderProcessData(batch);
+        renderInspectionSummary(batch);
+      }catch(error){
+        console.error('批次数据加载失败：',error);
+        showBatchLoadMessage('批次数据读取失败，请刷新页面后重试');
+      }
     }
     load();
   </script>
