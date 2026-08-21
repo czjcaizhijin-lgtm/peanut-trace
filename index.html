@@ -902,32 +902,32 @@
       </div>
     </section>
 
-
     <section id="achievements" class="section">
       <style>
+        #achievements {
+          padding: 24px 0;
+        }
         #achievements .achievement-header {
           display:flex;
-          align-items:flex-end;
+          align-items:center;
           justify-content:space-between;
-          gap:18px;
-          margin-bottom:18px;
-        }
-        #achievements .achievement-header-text {
-          max-width:720px;
+          gap:16px;
+          margin-bottom:12px;
         }
         #achievements .achievement-header-text p {
-          margin:8px 0 0;
+          margin:5px 0 0;
           color:var(--muted);
-          font-size:14px;
+          font-size:13px;
+          line-height:1.6;
         }
         #achievements .achievement-controls {
           display:flex;
-          gap:8px;
+          gap:7px;
           flex:none;
         }
         #achievements .achievement-arrow {
-          width:42px;
-          height:42px;
+          width:38px;
+          height:38px;
           padding:0;
           border:1px solid #d7c9a5;
           border-radius:50%;
@@ -937,11 +937,12 @@
           place-items:center;
           cursor:pointer;
           position:relative;
+          touch-action:manipulation;
         }
         #achievements .achievement-arrow::before {
           content:"";
-          width:9px;
-          height:9px;
+          width:8px;
+          height:8px;
           border-right:2px solid currentColor;
           border-bottom:2px solid currentColor;
           box-sizing:border-box;
@@ -953,79 +954,90 @@
           transform:translateX(-2px) rotate(-45deg);
         }
         #achievements .achievement-viewport {
+          position:relative;
           overflow:hidden;
-          border-radius:26px;
+          border-radius:20px;
+          background:#eee9df;
+          touch-action:pan-y;
         }
-        #achievements .achievement-track {
+        #achievements .achievement-strip {
           display:flex;
-          overflow-x:auto;
-          scroll-snap-type:x mandatory;
-          scroll-behavior:smooth;
-          scrollbar-width:none;
-          -webkit-overflow-scrolling:touch;
-          touch-action:pan-x;
-        }
-        #achievements .achievement-track::-webkit-scrollbar {
-          display:none;
+          width:100%;
+          will-change:transform;
+          transform:translate3d(-100%,0,0);
+          transition:transform .45s cubic-bezier(.22,.61,.36,1);
         }
         #achievements .achievement-slide {
           flex:0 0 100%;
-          scroll-snap-align:start;
           min-width:0;
-          padding:1px;
         }
         #achievements .achievement-card {
-          background:rgba(255,253,248,.9);
+          display:grid;
+          grid-template-columns:minmax(0,1.45fr) minmax(260px,.55fr);
+          min-height:300px;
+          background:rgba(255,253,248,.94);
           border:1px solid var(--line);
-          border-radius:26px;
+          border-radius:20px;
           overflow:hidden;
-          box-shadow:0 10px 36px rgba(45,58,49,.05);
+          box-shadow:0 8px 28px rgba(45,58,49,.05);
         }
         #achievements .achievement-image-frame {
-          height:clamp(380px, 47vw, 600px);
+          height:300px;
           display:flex;
           align-items:center;
           justify-content:center;
-          padding:20px;
-          background:#eee9df;
-          border-bottom:1px solid var(--line);
+          padding:10px;
+          background:#ece7dd;
+          overflow:hidden;
+          cursor:zoom-in;
         }
         #achievements .achievement-image-frame img {
           width:100%;
           height:100%;
           object-fit:contain;
           object-position:center;
+          user-select:none;
+          -webkit-user-drag:none;
         }
         #achievements .achievement-caption {
-          padding:20px 24px 22px;
+          padding:22px;
+          display:flex;
+          flex-direction:column;
+          justify-content:center;
+          border-left:1px solid var(--line);
         }
         #achievements .achievement-caption small {
-          display:block;
           color:var(--gold);
           font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;
-          font-weight:800;
           font-size:11px;
+          font-weight:800;
           letter-spacing:.08em;
           margin-bottom:5px;
         }
         #achievements .achievement-caption h3 {
           margin:0;
           color:var(--green-950);
-          font-size:23px;
+          font-size:22px;
           line-height:1.35;
         }
         #achievements .achievement-caption p {
           margin:8px 0 0;
           color:var(--muted);
-          font-size:14px;
-          line-height:1.75;
+          font-size:13px;
+          line-height:1.65;
+        }
+        #achievements .achievement-view-tip {
+          margin-top:10px;
+          color:#8a908b;
+          font-size:11px;
+          font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;
         }
         #achievements .achievement-dots {
           display:flex;
           justify-content:center;
           align-items:center;
           gap:7px;
-          margin-top:12px;
+          margin-top:10px;
         }
         #achievements .achievement-dot {
           width:7px;
@@ -1034,42 +1046,111 @@
           border:0;
           border-radius:999px;
           background:#cfc7b4;
-          cursor:pointer;
           transition:width .18s ease, background .18s ease;
         }
         #achievements .achievement-dot.active {
           width:22px;
           background:var(--green-900);
         }
-        @media (max-width: 520px) {
-          #achievements { padding:24px 0; }
-          #achievements .achievement-header {
-            align-items:flex-start;
-            gap:12px;
-          }
-          #achievements .achievement-header-text p {
-            font-size:12.5px;
-            line-height:1.65;
-          }
-          #achievements .achievement-arrow {
-            width:36px;
-            height:36px;
+
+        .achievement-lightbox {
+          position:fixed;
+          inset:0;
+          z-index:120;
+          display:none;
+          align-items:center;
+          justify-content:center;
+          padding:18px;
+          background:rgba(10,20,15,.90);
+        }
+        .achievement-lightbox.open {
+          display:flex;
+        }
+        .achievement-lightbox img {
+          max-width:min(1100px,96vw);
+          max-height:88vh;
+          object-fit:contain;
+          border-radius:10px;
+          background:white;
+          box-shadow:0 20px 70px rgba(0,0,0,.35);
+        }
+        .achievement-lightbox-close {
+          position:fixed;
+          right:18px;
+          top:18px;
+          width:40px;
+          height:40px;
+          border:0;
+          border-radius:50%;
+          background:#fff;
+          color:var(--green-950);
+          font-size:25px;
+          line-height:1;
+          cursor:pointer;
+        }
+
+        @media (max-width: 760px) {
+          #achievements .achievement-card {
+            grid-template-columns:1fr;
+            min-height:0;
           }
           #achievements .achievement-image-frame {
-            height:390px;
-            padding:10px;
-          }
-          #achievements .achievement-card {
-            border-radius:20px;
+            height:250px;
           }
           #achievements .achievement-caption {
-            padding:15px 16px 17px;
+            padding:14px 16px 15px;
+            border-left:0;
+            border-top:1px solid var(--line);
+          }
+        }
+
+        @media (max-width: 520px) {
+          #achievements {
+            padding:18px 0;
+          }
+          #achievements .achievement-header {
+            margin-bottom:9px;
+            align-items:flex-start;
+          }
+          #achievements .achievement-header-text p {
+            display:none;
+          }
+          #achievements .section-title {
+            font-size:27px;
+          }
+          #achievements .achievement-arrow {
+            width:34px;
+            height:34px;
+          }
+          #achievements .achievement-viewport,
+          #achievements .achievement-card {
+            border-radius:17px;
+          }
+          #achievements .achievement-image-frame {
+            height:220px;
+            padding:7px;
+          }
+          #achievements .achievement-caption {
+            padding:11px 13px 12px;
+          }
+          #achievements .achievement-caption small {
+            margin-bottom:2px;
+            font-size:10px;
           }
           #achievements .achievement-caption h3 {
-            font-size:19px;
+            font-size:17px;
           }
           #achievements .achievement-caption p {
-            font-size:12.5px;
+            margin-top:5px;
+            font-size:12px;
+            line-height:1.55;
+          }
+          #achievements .achievement-view-tip {
+            margin-top:6px;
+            font-size:10px;
+          }
+          #achievements .achievement-dots {
+            margin-top:8px;
           }
         }
       </style>
@@ -1079,7 +1160,7 @@
           <div class="achievement-header-text">
             <div class="section-kicker">产业成果</div>
             <h2 class="section-title">成果展示</h2>
-            <p>以下内容依据现有挂牌、示范基地与合作材料展示，主要反映项目所依托的科研协同与产业应用基础。</p>
+            <p>科研协同、示范基地与阶段性成果材料。</p>
           </div>
           <div class="achievement-controls" aria-label="成果轮播控制">
             <button id="achievementPrev" class="achievement-arrow prev" type="button" aria-label="上一项成果"></button>
@@ -1087,56 +1168,49 @@
           </div>
         </div>
 
-        <div class="achievement-viewport">
-          <div id="achievementTrack" class="achievement-track" aria-label="成果展示，可左右滑动">
+        <div id="achievementViewport" class="achievement-viewport">
+          <div id="achievementStrip" class="achievement-strip" aria-live="polite">
             <article class="achievement-slide">
               <div class="achievement-card">
-                <div class="achievement-image-frame">
-                  <img src="achievement-fund.png" alt="彩票公益金资助与特色农产品产业研究院相关挂牌材料">
-                </div>
+                <div class="achievement-image-frame"><img src="achievement-fund.png" alt="彩票公益金资助与特色农产品产业研究院相关挂牌材料"></div>
                 <div class="achievement-caption">
                   <small>成果 01</small>
                   <h3>产业研究平台与公益资金支持</h3>
-                  <p>现有材料展示了彩票公益金资助信息，以及如皋高沙土特色农产品产业研究院相关建设基础。</p>
+                  <p>展示彩票公益金资助信息及相关产业研究平台建设基础。</p>
+                  <div class="achievement-view-tip">点击图片可放大查看</div>
                 </div>
               </div>
             </article>
-
             <article class="achievement-slide">
               <div class="achievement-card">
-                <div class="achievement-image-frame">
-                  <img src="achievement-station.jpg" alt="江苏省科技小院挂牌">
-                </div>
+                <div class="achievement-image-frame"><img src="achievement-station.jpg" alt="江苏省科技小院挂牌"></div>
                 <div class="achievement-caption">
                   <small>成果 02</small>
                   <h3>江苏省科技小院建设</h3>
-                  <p>科技小院挂牌材料体现了江安镇在科研院所协同、农机与农业科技支撑方面的长期平台基础。</p>
+                  <p>体现科研院所协同、农机与农业科技支撑的平台基础。</p>
+                  <div class="achievement-view-tip">点击图片可放大查看</div>
                 </div>
               </div>
             </article>
-
             <article class="achievement-slide">
               <div class="achievement-card">
-                <div class="achievement-image-frame">
-                  <img src="achievement-base.jpg" alt="花生科技示范展示基地">
-                </div>
+                <div class="achievement-image-frame"><img src="achievement-base.jpg" alt="花生科技示范展示基地"></div>
                 <div class="achievement-caption">
                   <small>成果 03</small>
                   <h3>花生科技示范展示基地</h3>
-                  <p>现有基地材料显示，已建设花生科技示范展示基地，开展品种、栽培技术与机械化作业等示范。</p>
+                  <p>开展花生品种、栽培技术与机械化作业等示范展示。</p>
+                  <div class="achievement-view-tip">点击图片可放大查看</div>
                 </div>
               </div>
             </article>
-
             <article class="achievement-slide">
               <div class="achievement-card">
-                <div class="achievement-image-frame">
-                  <img src="achievement-results.png" alt="产业研究院共建协议相关指标年度完成情况材料">
-                </div>
+                <div class="achievement-image-frame"><img src="achievement-results.png" alt="产业研究院共建协议相关指标年度完成情况材料"></div>
                 <div class="achievement-caption">
                   <small>成果 04</small>
                   <h3>产业研究院阶段性合作成果</h3>
-                  <p>现有材料记录了合作项目、知识产权、科技服务、示范推广与相关成果的阶段性完成情况。</p>
+                  <p>记录合作项目、科技服务、示范推广等阶段性完成情况。</p>
+                  <div class="achievement-view-tip">点击图片可放大查看</div>
                 </div>
               </div>
             </article>
@@ -1144,15 +1218,20 @@
         </div>
 
         <div id="achievementDots" class="achievement-dots" aria-label="成果轮播位置">
-          <button class="achievement-dot active" type="button" data-index="0" aria-label="查看成果1"></button>
-          <button class="achievement-dot" type="button" data-index="1" aria-label="查看成果2"></button>
-          <button class="achievement-dot" type="button" data-index="2" aria-label="查看成果3"></button>
-          <button class="achievement-dot" type="button" data-index="3" aria-label="查看成果4"></button>
+          <span class="achievement-dot active"></span>
+          <span class="achievement-dot"></span>
+          <span class="achievement-dot"></span>
+          <span class="achievement-dot"></span>
         </div>
       </div>
     </section>
 
-    <section id="story" class="section">
+    <div id="achievementLightbox" class="achievement-lightbox" role="dialog" aria-modal="true" aria-label="成果图片大图预览">
+      <button id="achievementLightboxClose" class="achievement-lightbox-close" type="button" aria-label="关闭">×</button>
+      <img id="achievementLightboxImage" alt="成果材料大图">
+    </div>
+
+<section id="story" class="section">
       <div class="shell">
         <div class="story-card">
           <div class="section-kicker"></div>
@@ -1458,100 +1537,159 @@
   </script>
 
 
+
 <script>
 (() => {
-  const track = document.getElementById('achievementTrack');
+  const viewport = document.getElementById('achievementViewport');
+  const strip = document.getElementById('achievementStrip');
   const prev = document.getElementById('achievementPrev');
   const next = document.getElementById('achievementNext');
   const dots = [...document.querySelectorAll('#achievementDots .achievement-dot')];
-  if (!track || !prev || !next || !dots.length) return;
+  const lightbox = document.getElementById('achievementLightbox');
+  const lightboxImage = document.getElementById('achievementLightboxImage');
+  const lightboxClose = document.getElementById('achievementLightboxClose');
 
-  let index = 0;
+  if (!viewport || !strip || !prev || !next || dots.length !== 4) return;
+
+  const originals = [...strip.children];
+  const count = originals.length;
+  const firstClone = originals[0].cloneNode(true);
+  const lastClone = originals[count - 1].cloneNode(true);
+  firstClone.classList.add('achievement-clone');
+  lastClone.classList.add('achievement-clone');
+  strip.insertBefore(lastClone, originals[0]);
+  strip.appendChild(firstClone);
+
+  let position = 1;
+  let logicalIndex = 0;
   let timer = null;
   let resumeTimer = null;
+  let animating = false;
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let dragging = false;
 
-  const slides = () => [...track.querySelectorAll('.achievement-slide')];
+  const updateDots = () => {
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === logicalIndex));
+  };
 
-  function updateDots() {
-    dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
-  }
+  const applyTransform = (animate = true) => {
+    strip.style.transition = animate ? 'transform .45s cubic-bezier(.22,.61,.36,1)' : 'none';
+    strip.style.transform = `translate3d(${-position * 100}%,0,0)`;
+  };
 
-  function goTo(nextIndex, behavior = 'smooth') {
-    const items = slides();
-    if (!items.length) return;
-    index = (nextIndex + items.length) % items.length;
-    track.scrollTo({
-      left: items[index].offsetLeft - track.offsetLeft,
-      behavior
-    });
+  const syncLogicalIndex = () => {
+    if (position === 0) logicalIndex = count - 1;
+    else if (position === count + 1) logicalIndex = 0;
+    else logicalIndex = position - 1;
     updateDots();
-  }
+  };
 
-  function stopAuto() {
+  const moveTo = newPosition => {
+    if (animating) return;
+    animating = true;
+    position = newPosition;
+    syncLogicalIndex();
+    applyTransform(true);
+  };
+
+  const nextSlide = () => moveTo(position + 1);
+  const prevSlide = () => moveTo(position - 1);
+
+  strip.addEventListener('transitionend', () => {
+    if (position === count + 1) {
+      position = 1;
+      applyTransform(false);
+    } else if (position === 0) {
+      position = count;
+      applyTransform(false);
+    }
+    syncLogicalIndex();
+    animating = false;
+  });
+
+  const stopAuto = () => {
     if (timer) clearInterval(timer);
     if (resumeTimer) clearTimeout(resumeTimer);
     timer = null;
     resumeTimer = null;
-  }
+  };
 
-  function startAuto(delay = 0) {
+  const startAuto = (delay = 0) => {
     stopAuto();
     const begin = () => {
-      timer = setInterval(() => goTo(index + 1), 5000);
+      timer = setInterval(() => nextSlide(), 4000);
     };
     if (delay) resumeTimer = setTimeout(begin, delay);
     else begin();
-  }
+  };
 
   prev.addEventListener('click', () => {
     stopAuto();
-    goTo(index - 1);
-    startAuto(6500);
+    prevSlide();
+    startAuto(4000);
   });
 
   next.addEventListener('click', () => {
     stopAuto();
-    goTo(index + 1);
-    startAuto(6500);
+    nextSlide();
+    startAuto(4000);
   });
 
-  dots.forEach(dot => {
-    dot.addEventListener('click', () => {
-      stopAuto();
-      goTo(Number(dot.dataset.index));
-      startAuto(6500);
-    });
-  });
-
-  let scrollEndTimer = null;
-  track.addEventListener('scroll', () => {
-    clearTimeout(scrollEndTimer);
-    scrollEndTimer = setTimeout(() => {
-      const items = slides();
-      const center = track.scrollLeft + track.clientWidth / 2;
-      let nearest = 0;
-      let best = Infinity;
-      items.forEach((item, i) => {
-        const itemCenter = item.offsetLeft + item.offsetWidth / 2;
-        const distance = Math.abs(itemCenter - center);
-        if (distance < best) {
-          best = distance;
-          nearest = i;
-        }
-      });
-      index = nearest;
-      updateDots();
-    }, 90);
+  viewport.addEventListener('touchstart', event => {
+    if (!event.touches?.length) return;
+    stopAuto();
+    touchStartX = event.touches[0].clientX;
+    touchStartY = event.touches[0].clientY;
+    dragging = true;
   }, { passive: true });
 
-  ['touchstart', 'pointerdown', 'mouseenter', 'focusin'].forEach(eventName => {
-    track.addEventListener(eventName, stopAuto, { passive: true });
+  viewport.addEventListener('touchend', event => {
+    if (!dragging) return;
+    dragging = false;
+    const touch = event.changedTouches?.[0];
+    if (!touch) return startAuto(4000);
+
+    const dx = touch.clientX - touchStartX;
+    const dy = touch.clientY - touchStartY;
+    if (Math.abs(dx) > 42 && Math.abs(dx) > Math.abs(dy) * 1.15) {
+      if (dx < 0) nextSlide();
+      else prevSlide();
+    }
+    startAuto(4000);
+  }, { passive: true });
+
+  viewport.addEventListener('touchcancel', () => {
+    dragging = false;
+    startAuto(4000);
+  }, { passive: true });
+
+  strip.addEventListener('click', event => {
+    const img = event.target.closest('.achievement-image-frame img');
+    if (!img || !lightbox || !lightboxImage) return;
+    lightboxImage.src = img.getAttribute('src');
+    lightboxImage.alt = img.alt || '成果材料大图';
+    lightbox.classList.add('open');
+    stopAuto();
   });
 
-  ['touchend', 'pointerup', 'mouseleave', 'focusout'].forEach(eventName => {
-    track.addEventListener(eventName, () => startAuto(6500), { passive: true });
+  const closeLightbox = () => {
+    if (!lightbox) return;
+    lightbox.classList.remove('open');
+    lightboxImage.removeAttribute('src');
+    startAuto(4000);
+  };
+
+  lightboxClose?.addEventListener('click', closeLightbox);
+  lightbox?.addEventListener('click', event => {
+    if (event.target === lightbox) closeLightbox();
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && lightbox?.classList.contains('open')) closeLightbox();
   });
 
+  applyTransform(false);
+  updateDots();
   if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     startAuto();
   }
