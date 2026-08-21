@@ -902,6 +902,256 @@
       </div>
     </section>
 
+
+    <section id="achievements" class="section">
+      <style>
+        #achievements .achievement-header {
+          display:flex;
+          align-items:flex-end;
+          justify-content:space-between;
+          gap:18px;
+          margin-bottom:18px;
+        }
+        #achievements .achievement-header-text {
+          max-width:720px;
+        }
+        #achievements .achievement-header-text p {
+          margin:8px 0 0;
+          color:var(--muted);
+          font-size:14px;
+        }
+        #achievements .achievement-controls {
+          display:flex;
+          gap:8px;
+          flex:none;
+        }
+        #achievements .achievement-arrow {
+          width:42px;
+          height:42px;
+          padding:0;
+          border:1px solid #d7c9a5;
+          border-radius:50%;
+          background:rgba(255,253,248,.96);
+          color:var(--green-950);
+          display:grid;
+          place-items:center;
+          cursor:pointer;
+          position:relative;
+        }
+        #achievements .achievement-arrow::before {
+          content:"";
+          width:9px;
+          height:9px;
+          border-right:2px solid currentColor;
+          border-bottom:2px solid currentColor;
+          box-sizing:border-box;
+        }
+        #achievements .achievement-arrow.prev::before {
+          transform:translateX(2px) rotate(135deg);
+        }
+        #achievements .achievement-arrow.next::before {
+          transform:translateX(-2px) rotate(-45deg);
+        }
+        #achievements .achievement-viewport {
+          overflow:hidden;
+          border-radius:26px;
+        }
+        #achievements .achievement-track {
+          display:flex;
+          overflow-x:auto;
+          scroll-snap-type:x mandatory;
+          scroll-behavior:smooth;
+          scrollbar-width:none;
+          -webkit-overflow-scrolling:touch;
+          touch-action:pan-x;
+        }
+        #achievements .achievement-track::-webkit-scrollbar {
+          display:none;
+        }
+        #achievements .achievement-slide {
+          flex:0 0 100%;
+          scroll-snap-align:start;
+          min-width:0;
+          padding:1px;
+        }
+        #achievements .achievement-card {
+          background:rgba(255,253,248,.9);
+          border:1px solid var(--line);
+          border-radius:26px;
+          overflow:hidden;
+          box-shadow:0 10px 36px rgba(45,58,49,.05);
+        }
+        #achievements .achievement-image-frame {
+          height:clamp(380px, 47vw, 600px);
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          padding:20px;
+          background:#eee9df;
+          border-bottom:1px solid var(--line);
+        }
+        #achievements .achievement-image-frame img {
+          width:100%;
+          height:100%;
+          object-fit:contain;
+          object-position:center;
+        }
+        #achievements .achievement-caption {
+          padding:20px 24px 22px;
+        }
+        #achievements .achievement-caption small {
+          display:block;
+          color:var(--gold);
+          font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;
+          font-weight:800;
+          font-size:11px;
+          letter-spacing:.08em;
+          margin-bottom:5px;
+        }
+        #achievements .achievement-caption h3 {
+          margin:0;
+          color:var(--green-950);
+          font-size:23px;
+          line-height:1.35;
+        }
+        #achievements .achievement-caption p {
+          margin:8px 0 0;
+          color:var(--muted);
+          font-size:14px;
+          line-height:1.75;
+        }
+        #achievements .achievement-dots {
+          display:flex;
+          justify-content:center;
+          align-items:center;
+          gap:7px;
+          margin-top:12px;
+        }
+        #achievements .achievement-dot {
+          width:7px;
+          height:7px;
+          padding:0;
+          border:0;
+          border-radius:999px;
+          background:#cfc7b4;
+          cursor:pointer;
+          transition:width .18s ease, background .18s ease;
+        }
+        #achievements .achievement-dot.active {
+          width:22px;
+          background:var(--green-900);
+        }
+        @media (max-width: 520px) {
+          #achievements { padding:24px 0; }
+          #achievements .achievement-header {
+            align-items:flex-start;
+            gap:12px;
+          }
+          #achievements .achievement-header-text p {
+            font-size:12.5px;
+            line-height:1.65;
+          }
+          #achievements .achievement-arrow {
+            width:36px;
+            height:36px;
+          }
+          #achievements .achievement-image-frame {
+            height:390px;
+            padding:10px;
+          }
+          #achievements .achievement-card {
+            border-radius:20px;
+          }
+          #achievements .achievement-caption {
+            padding:15px 16px 17px;
+          }
+          #achievements .achievement-caption h3 {
+            font-size:19px;
+          }
+          #achievements .achievement-caption p {
+            font-size:12.5px;
+          }
+        }
+      </style>
+
+      <div class="shell">
+        <div class="achievement-header">
+          <div class="achievement-header-text">
+            <div class="section-kicker">产业成果</div>
+            <h2 class="section-title">成果展示</h2>
+            <p>以下内容依据现有挂牌、示范基地与合作材料展示，主要反映项目所依托的科研协同与产业应用基础。</p>
+          </div>
+          <div class="achievement-controls" aria-label="成果轮播控制">
+            <button id="achievementPrev" class="achievement-arrow prev" type="button" aria-label="上一项成果"></button>
+            <button id="achievementNext" class="achievement-arrow next" type="button" aria-label="下一项成果"></button>
+          </div>
+        </div>
+
+        <div class="achievement-viewport">
+          <div id="achievementTrack" class="achievement-track" aria-label="成果展示，可左右滑动">
+            <article class="achievement-slide">
+              <div class="achievement-card">
+                <div class="achievement-image-frame">
+                  <img src="achievement-fund.png" alt="彩票公益金资助与特色农产品产业研究院相关挂牌材料">
+                </div>
+                <div class="achievement-caption">
+                  <small>成果 01</small>
+                  <h3>产业研究平台与公益资金支持</h3>
+                  <p>现有材料展示了彩票公益金资助信息，以及如皋高沙土特色农产品产业研究院相关建设基础。</p>
+                </div>
+              </div>
+            </article>
+
+            <article class="achievement-slide">
+              <div class="achievement-card">
+                <div class="achievement-image-frame">
+                  <img src="achievement-station.jpg" alt="江苏省科技小院挂牌">
+                </div>
+                <div class="achievement-caption">
+                  <small>成果 02</small>
+                  <h3>江苏省科技小院建设</h3>
+                  <p>科技小院挂牌材料体现了江安镇在科研院所协同、农机与农业科技支撑方面的长期平台基础。</p>
+                </div>
+              </div>
+            </article>
+
+            <article class="achievement-slide">
+              <div class="achievement-card">
+                <div class="achievement-image-frame">
+                  <img src="achievement-base.jpg" alt="花生科技示范展示基地">
+                </div>
+                <div class="achievement-caption">
+                  <small>成果 03</small>
+                  <h3>花生科技示范展示基地</h3>
+                  <p>现有基地材料显示，已建设花生科技示范展示基地，开展品种、栽培技术与机械化作业等示范。</p>
+                </div>
+              </div>
+            </article>
+
+            <article class="achievement-slide">
+              <div class="achievement-card">
+                <div class="achievement-image-frame">
+                  <img src="achievement-results.png" alt="产业研究院共建协议相关指标年度完成情况材料">
+                </div>
+                <div class="achievement-caption">
+                  <small>成果 04</small>
+                  <h3>产业研究院阶段性合作成果</h3>
+                  <p>现有材料记录了合作项目、知识产权、科技服务、示范推广与相关成果的阶段性完成情况。</p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div id="achievementDots" class="achievement-dots" aria-label="成果轮播位置">
+          <button class="achievement-dot active" type="button" data-index="0" aria-label="查看成果1"></button>
+          <button class="achievement-dot" type="button" data-index="1" aria-label="查看成果2"></button>
+          <button class="achievement-dot" type="button" data-index="2" aria-label="查看成果3"></button>
+          <button class="achievement-dot" type="button" data-index="3" aria-label="查看成果4"></button>
+        </div>
+      </div>
+    </section>
+
     <section id="story" class="section">
       <div class="shell">
         <div class="story-card">
@@ -1206,6 +1456,107 @@
     }
     load();
   </script>
+
+
+<script>
+(() => {
+  const track = document.getElementById('achievementTrack');
+  const prev = document.getElementById('achievementPrev');
+  const next = document.getElementById('achievementNext');
+  const dots = [...document.querySelectorAll('#achievementDots .achievement-dot')];
+  if (!track || !prev || !next || !dots.length) return;
+
+  let index = 0;
+  let timer = null;
+  let resumeTimer = null;
+
+  const slides = () => [...track.querySelectorAll('.achievement-slide')];
+
+  function updateDots() {
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+  }
+
+  function goTo(nextIndex, behavior = 'smooth') {
+    const items = slides();
+    if (!items.length) return;
+    index = (nextIndex + items.length) % items.length;
+    track.scrollTo({
+      left: items[index].offsetLeft - track.offsetLeft,
+      behavior
+    });
+    updateDots();
+  }
+
+  function stopAuto() {
+    if (timer) clearInterval(timer);
+    if (resumeTimer) clearTimeout(resumeTimer);
+    timer = null;
+    resumeTimer = null;
+  }
+
+  function startAuto(delay = 0) {
+    stopAuto();
+    const begin = () => {
+      timer = setInterval(() => goTo(index + 1), 5000);
+    };
+    if (delay) resumeTimer = setTimeout(begin, delay);
+    else begin();
+  }
+
+  prev.addEventListener('click', () => {
+    stopAuto();
+    goTo(index - 1);
+    startAuto(6500);
+  });
+
+  next.addEventListener('click', () => {
+    stopAuto();
+    goTo(index + 1);
+    startAuto(6500);
+  });
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      stopAuto();
+      goTo(Number(dot.dataset.index));
+      startAuto(6500);
+    });
+  });
+
+  let scrollEndTimer = null;
+  track.addEventListener('scroll', () => {
+    clearTimeout(scrollEndTimer);
+    scrollEndTimer = setTimeout(() => {
+      const items = slides();
+      const center = track.scrollLeft + track.clientWidth / 2;
+      let nearest = 0;
+      let best = Infinity;
+      items.forEach((item, i) => {
+        const itemCenter = item.offsetLeft + item.offsetWidth / 2;
+        const distance = Math.abs(itemCenter - center);
+        if (distance < best) {
+          best = distance;
+          nearest = i;
+        }
+      });
+      index = nearest;
+      updateDots();
+    }, 90);
+  }, { passive: true });
+
+  ['touchstart', 'pointerdown', 'mouseenter', 'focusin'].forEach(eventName => {
+    track.addEventListener(eventName, stopAuto, { passive: true });
+  });
+
+  ['touchend', 'pointerup', 'mouseleave', 'focusout'].forEach(eventName => {
+    track.addEventListener(eventName, () => startAuto(6500), { passive: true });
+  });
+
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    startAuto();
+  }
+})();
+</script>
 
 </body>
 </html>
