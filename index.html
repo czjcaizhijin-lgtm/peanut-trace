@@ -584,6 +584,60 @@
       .pdf-page-card { border-radius: 8px; }
     }
 
+  
+    /* 手机端：产品身份紧凑化 */
+    @media (max-width: 520px) {
+      #identity {
+        padding: 20px 0;
+      }
+
+      #identity .section-head {
+        margin-bottom: 12px;
+        gap: 6px;
+      }
+
+      #identity .section-title {
+        font-size: 27px;
+        line-height: 1.25;
+      }
+
+      #identity .section-kicker {
+        margin-bottom: 4px;
+        font-size: 11px;
+      }
+
+      #identity .section-note {
+        display: none;
+      }
+
+      #identity .panel {
+        padding: 16px;
+        border-radius: 20px;
+      }
+
+      #identity .identity-grid {
+        grid-template-columns: repeat(2, minmax(0,1fr));
+        gap: 0 16px;
+      }
+
+      #identity .kv {
+        padding: 10px 0 12px;
+        min-width: 0;
+      }
+
+      #identity .kv small {
+        margin-bottom: 3px;
+        font-size: 11px;
+      }
+
+      #identity .kv strong {
+        display: block;
+        font-size: 15px;
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -630,24 +684,7 @@
       </div>
     </section>
 
-    <section id="trust" class="section">
-      <div class="shell">
-        <div class="section-head">
-          <div>
-            <div class="section-kicker">三层可信</div>
-            <h2 class="section-title">三层可信，不止一个二维码</h2>
-          </div>
-          <div class="section-note">真正的溯源不是把信息“写进页面”，而是让生产数据在设备运行时自然产生，再由检测结果进行终端验证。</div>
-        </div>
-        <div class="trust-grid">
-          <article class="trust-card"><h3>产地可溯</h3><p>关联江苏如皋江安镇特色花生产业基地、品种与生产批次信息。</p></article>
-          <article class="trust-card"><h3>过程可查</h3><p>关键设备运行、干燥、储藏和加工参数进入批次数字质量档案。</p></article>
-          <article class="trust-card"><h3>检测可验</h3><p>第三方检验结果与加工批次关联，形成“过程可控 + 结果可验”的双重证据。</p></article>
-        </div>
-      </div>
-    </section>
-
-    <section id="identity" class="section">
+<section id="identity" class="section">
       <div class="shell">
         <div class="section-head">
           <div><div class="section-kicker">产品身份</div><h2 class="section-title">本批产品身份</h2></div>
@@ -927,11 +964,11 @@
     function renderIdentity(b){
       const items=[
         ['产品名称',batchValue(b?.product_name)],
-        ['产地',batchValue(b?.origin)],
         ['品种',batchValue(b?.variety)],
+        ['产地',batchValue(b?.origin)],
+        ['包装规格',batchValue(b?.package_spec)],
         ['采收日期',formatBatchDate(b?.harvest_date)],
-        ['加工日期',formatBatchDate(b?.process_date)],
-        ['包装规格',batchValue(b?.package_spec)]
+        ['加工日期',formatBatchDate(b?.process_date)]
       ];
       const box=document.getElementById('identityGrid');
       box.innerHTML='';
