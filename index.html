@@ -1257,7 +1257,7 @@
     const SUPABASE_URL = "https://jgoluzlxhzikrkxammje.supabase.co";
     const SUPABASE_KEY = "sb_publishable_F8SQl1U_G-jdDDW6mAw27w_rTxYlDK4";
     const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    const requestedBatch = new URLSearchParams(location.search).get("batch") || "JA-DEMO-2026-001";
+    const requestedBatch = new URLSearchParams(location.search).get("batch") || "JA-2026-001";
     const displayBatchCode = code => {
       const parts = String(code || "").split("-").filter(Boolean);
       const cleaned = parts.filter(p => !["JA","DEMO"].includes(p.toUpperCase()));
@@ -1344,7 +1344,7 @@
       box.innerHTML=currentJourney.map((item,i)=>{
         const source=item.image_url||placeholder(item);
         const fallback=placeholder(item);
-        const state=item.image_url?'该环节暂未上传现场图片';
+        const state=item.image_url?:'该环节暂未上传现场图片';
         return `
           <article class="panel journey-accordion-item" data-index="${i}">
             <button type="button" class="journey-accordion-trigger" data-index="${i}" aria-expanded="false">
